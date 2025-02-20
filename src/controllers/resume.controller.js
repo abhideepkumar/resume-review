@@ -35,3 +35,32 @@ export const uploadResume = asyncHandler(async (req, res) => {
     })
   );
 });
+
+export const searchResume = asyncHandler(async (req, res) => {
+  const { name } = req.body;
+  const { token } = req.cookies;
+
+  // Verify auth token and validate input
+  jwtVerify(token);
+  validateFields({ name });
+
+  // Search for user data
+  try {
+    const userFound = await user.find({ name });
+    console.log("User found:", userFound.length);
+    return res.status(200).json(
+      new ApiResponse(200, {
+        TotalUsersFound: userFound.length,
+        message: "User data retrieved successfully",
+        userFound,
+      })
+    );
+  } catch (error) {
+    console.error("Error searching for user data:", error);
+    return res.status(404).json(
+      new ApiResponse(404, {
+        message: "User data not found",
+      })
+    );
+  }
+});
