@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import { ApiError } from "../utils/ApiError.js";
 
 const verifyAuthToken = (token) => {
-  console.log("Token:", token);
+  // console.log("Token:", token);
   if (!token) {
     console.log("No token");
     throw new ApiError(401, "Authorization token missing");

@@ -7,6 +7,7 @@ import { user } from "../models/user.model.js";
 import jwtVerify from "../middleware/jwtVerify.js";
 import callGeminiAPI from "../utils/callGemini.js";
 
+// Upload resume
 export const uploadResume = asyncHandler(async (req, res) => {
   const { token } = req.cookies;
   const { raw_text } = req.body;
@@ -30,12 +31,13 @@ export const uploadResume = asyncHandler(async (req, res) => {
   console.log("User data:", newUser);
   return res.status(200).json(
     new ApiResponse(200, {
-      generatedContent,
       message: "Resume processed and saved successfully",
+      generatedContent,
     })
   );
 });
 
+// Search resume using name
 export const searchResume = asyncHandler(async (req, res) => {
   const { name } = req.body;
   const { token } = req.cookies;
@@ -47,7 +49,6 @@ export const searchResume = asyncHandler(async (req, res) => {
   // Search for user data
   try {
     const userFound = await user.find({ name });
-    console.log("User found:", userFound.length);
     return res.status(200).json(
       new ApiResponse(200, {
         TotalUsersFound: userFound.length,

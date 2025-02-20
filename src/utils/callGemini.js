@@ -19,7 +19,7 @@ const callGeminiAPI = async (prompt) => {
 
     const generatedContent = response.data.candidates?.[0]?.content?.parts?.[0]?.text;
     if (!generatedContent) {
-      throw new Error("No content generated");
+      throw new ApiError(500,"No content generated",generatedContent);
     }
 
     return generatedContent;
