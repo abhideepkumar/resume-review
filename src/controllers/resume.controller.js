@@ -3,32 +3,31 @@ import { validateFields } from "../utils/validator.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import promptText from "../utils/prompt.js";
 import { parseResumeData } from "../utils/stringToJson.js";
-import { user } from "../models/user.model.js";
+import { applicant } from "../models/applicant.model.js";
 import jwtVerify from "../middleware/jwtVerify.js";
 import callGeminiAPI from "../utils/callGemini.js";
+import downloadAndParsePDF from "../utils/pdfUtil.js";
 
 // Upload resume
 export const uploadResume = asyncHandler(async (req, res) => {
   const { token } = req.cookies;
-  const { raw_text } = req.body;
+  const { url } = req.body;
 
   // Verify auth token and validate input
   jwtVerify(token);
-  validateFields({ raw_text });
-
+  validateFields(url);
+  const raw_text = await downloadAndParsePDF(url);
+  if (!raw_text) {
+    return res.status(500).json(new ApiResponse(500, "Error parsing PDF"));
+  }
   // Generate and process content
   const prompt = promptText(raw_text);
   const generatedContent = await callGeminiAPI(prompt);
   const resumeJson = parseResumeData(generatedContent);
 
-  // Save user data
-  const userData = new user({
-    name: resumeJson.name,
-    email: resumeJson.email,
-    ResumeJson: resumeJson,
-  });
-  const newUser = await user.create(userData);
-  console.log("User data:", newUser);
+  // Save applicant data
+  const newUser = await applicant.create(resumeJson);
+  console.log("applicant data:", newUser);
   return res.status(200).json(
     new ApiResponse(200, {
       message: "Resume processed and saved successfully",
@@ -46,22 +45,25 @@ export const searchResume = asyncHandler(async (req, res) => {
   jwtVerify(token);
   validateFields({ name });
 
-  // Search for user data
+  const searchPattern = new RegExp(name, "i");
   try {
-    const userFound = await user.find({ name });
+    const userFound = await applicant.find({ name: searchPattern });
+
+    if (!userFound || userFound.length === 0) {
+      return res.status(404).json(new ApiResponse(404, "No applicants found"));
+    }
+
     return res.status(200).json(
       new ApiResponse(200, {
         TotalUsersFound: userFound.length,
-        message: "User data retrieved successfully",
+        message: "Applicant data retrieved successfully",
         userFound,
       })
     );
   } catch (error) {
-    console.error("Error searching for user data:", error);
-    return res.status(404).json(
-      new ApiResponse(404, {
-        message: "User data not found",
-      })
-    );
+    console.error("Error searching for applicant data:", error);
+    return res
+      .status(500)
+      .json(new ApiResponse(500, { message: "Error occurred while searching for applicants", error: error.message }));
   }
 });
