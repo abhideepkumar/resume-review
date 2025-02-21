@@ -13,14 +13,13 @@
   },
   "dependencies": {
     "axios": "^1.7.9",
+    "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.7.1",
-    "pdf-parse": "^1.1.1",
-    "pdf-text": "^0.4.0",
     "pdf2json": "^3.1.5"
   },
   "devDependencies": {

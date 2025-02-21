@@ -1,9 +1,11 @@
 import { Router } from "express";
-import { uploadResume,searchResume } from "../controllers/resume.controller.js";
+import { uploadResume, searchResume } from "../controllers/resume.controller.js";
+import authMiddleware from "../middleware/authMiddleware.js";
+
 const router = Router();
-// router.use(express.json());
-//check jwt and upload Resume and save to database
-router.route("/uploadResume").post(uploadResume);
-router.route("/searchResume").post(searchResume);
+
+// protected endpoints with middleware
+router.route("/uploadResume").post(authMiddleware, uploadResume);
+router.route("/searchResume").post(authMiddleware, searchResume);
 
 export default router;

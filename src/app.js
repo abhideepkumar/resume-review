@@ -19,4 +19,15 @@ import resumeRouter from "./routes/resume.routes.js";
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/resume", resumeRouter);
 
+// Custom error-handling middleware
+app.use((err, req, res, next) => {
+  res.status(err.statusCode || 500);
+
+  res.json({
+    success: false,
+    message: err.message || "Something went wrong",
+    errors: err.errors || [],
+  });
+});
+
 export { app };
