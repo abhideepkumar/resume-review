@@ -16,6 +16,11 @@ import userRouter from "./routes/user.routes.js";
 import resumeRouter from "./routes/resume.routes.js";
 
 // routes decclaration
+app.get("/", (req, res) => {
+  res.send(
+    "<h1>Welcome to the Resume Review API. To know more about the API, please visit the documentation. <a href='https://github.com/abhideepkumar/resume-review'>Documentation</a></h1>"
+  );
+});
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/resume", resumeRouter);
 
