@@ -5,9 +5,9 @@ A Node.js backend service that provides RESTful APIs for resume analysis. It lev
 ## Features
 
 - **JWT Authentication:**  
-  Uses hard-coded credentials (`{"username": "naval.ravikant", "password": hashed env variable}`) to issue JWTs for API access.
+  User need to create account first. Then they need to login with their credentials to start analysing resumes.
 - **Resume Data Enrichment:**  
-  Accepts a PDF URL, extracts text using a PDF parser, and sends the raw data to Google Gemini LLM. The LLM response is then structured into JSON (including fields like name, email, education, experience, skills, and a candidate summary) and stored in a MongoDB collection.
+  Accepts a PDF URL,(supports a Google Drive pdf link) extracts text using a PDF parser, and sends the raw data to Google Gemini LLM. The LLM response is then structured into JSON (including fields like name, email, education, experience, skills, and a candidate summary and many useful fields) and stored in a MongoDB collection.
 
 - **Resume Search:**  
   Provides case-insensitive search for stored resume records by candidate name. Returns a list of matching entries if found.
@@ -41,12 +41,15 @@ MONGO_URI=<mongodb_connection_string>
 JWT_SECRET=<jwt_secret>
 JWT_EXPIRY=1h
 GEMINI_API_KEY=<gemini_api_key>
-ADMIN_PASSWORD_HASH=<hashed_password_using_bcrypt>
 ```
 
 ## API Endpoints
 
 1. **Authentication API**
+
+   - **Endpoint:** `/api/v1/users/signup` (POST)
+   - **Request:** JSON body with `username` and `password`
+   - **Response:** On success, returns a success message and then you can use for login.
 
    - **Endpoint:** `/api/v1/users/login` (POST)
    - **Request:** JSON body with `username` and `password`
