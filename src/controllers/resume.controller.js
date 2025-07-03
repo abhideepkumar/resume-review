@@ -6,20 +6,25 @@ import { parseResumeData } from "../utils/stringToJson.js";
 import { applicant } from "../models/applicant.model.js";
 import callGeminiAPI from "../utils/callGemini.js";
 import downloadAndParsePDF from "../utils/pdfUtil.js";
+import convertGoogleDriveUrl from "../utils/driveHandler.js";
 
 // Upload resume
 export const uploadResume = asyncHandler(async (req, res) => {
-  const { url } = req.body;
+  let { url } = req.body;
 
   // Validate input
   validateFields({ url });
+  url = convertGoogleDriveUrl(url);
+  console.log("Resume URL:", url);
 
   const raw_text = await downloadAndParsePDF(url);
+  // console.log("Downloaded content preview:", raw_text);
   if (!raw_text) {
     return res.status(500).json(new ApiResponse(500, "Error parsing PDF"));
   }
   // Generate and process content
   const prompt = promptText(raw_text);
+  console.log("prompt:\n", prompt)
   const generatedContent = await callGeminiAPI(prompt);
   const resumeJson = parseResumeData(generatedContent);
 

@@ -14,7 +14,7 @@ const applicantSchema = new mongoose.Schema({
     lowercase: true,
     // match: [/^\S+@\S+\.\S+$/, 'Please enter a valid email']
   },
-  education: {
+  education: [{
     degree: {
       type: String,
       required: true,
@@ -31,18 +31,18 @@ const applicantSchema = new mongoose.Schema({
       trim: true
     },
     year: {
-      type: Number,
+      type: String,
     }
-  },
-  experience: {
+  }],
+  experience: [{
     job_title: {
       type: String,
-      required: true,
+      required: false,
       trim: true
     },
     company: {
       type: String,
-      required: true,
+      required: false,
       trim: true
     },
     start_date: {
@@ -52,16 +52,64 @@ const applicantSchema = new mongoose.Schema({
       type: Date,
       default: null
     }
-  },
+  }],
+  projects: [{
+    project_name: {
+      type: String,
+      trim: true
+    },
+    description: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    skills_used: [{
+      skill_name: {
+        type: String,
+        required: true,
+        trim: true
+      },
+      level: {
+        type: Number,
+        required: true,
+        min: 1,
+        max: 5
+      }
+    }]
+  }],
   skills: [{
-    type: String,
-    trim: true
+    skill_name: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    level: {
+      type: Number,
+      required: true,
+      min: 1,
+      max: 5
+    }
   }],
   summary: {
     type: String,
     required: true,
     trim: true
-  }
+  },
+  predicted_designation: [{
+    type: String,
+    required: true,
+    trim: true
+  }],
+  predicted_experience: [{
+    type: String,
+    required: true,
+    trim: true
+  }],
+  predicted_salary: [{
+    type: String,
+    required: true,
+    trim: true
+  }]
 }, {
   timestamps: true
 });
